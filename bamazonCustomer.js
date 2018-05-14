@@ -51,7 +51,6 @@ function queryAllSaleProducts() {
       console.log(item_ID + '|' + name + '|' +  price);
 
     }
-    prompt
 
   });
 
