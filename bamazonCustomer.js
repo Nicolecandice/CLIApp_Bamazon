@@ -94,36 +94,32 @@ function queryAllSaleProducts() {
        });
       }
 
-    // });
-    // });
+     function updateProducts() {
+     console.log('Updating  products quantities...\n');
+     var query = connection.query(
+       'UPDATE products SET ?', [{
+           quantity: 175
+         },
+         {
+           Product_Name: ""
+         }
+       ],
+      function (err, res) {
+         console.log(res.affectedRows + "products updated!\n");
+        // Call updatedProduct AFTER the UPDATE completes
+         updateProducts();
 
+        // log the query being run
+         console.log(query.sql);
+       });
+   }
 
-  // function updateProducts() {
-  //   console.log('Updating  products quantities...\n');
-  //   var query = connection.query(
-  //     'UPDATE products SET ?', [{
-  //         quantity: 175
-  //       },
-  //       {
-  //         Product_Name: "dress"
-  //       }
-  //     ],
-  //     function (err, res) {
-  //       console.log(res.affectedRows + "products updated!\n");
-  //       // Call updatedProduct AFTER the UPDATE completes
-  //       updateProducts();
-
-  //       // log the query being run
-  //       console.log(query.sql);
-  //     });
-  // }
-
-  // var cusTotal;
-  // connection.query('SELECT Price FROM Products WHERE ?', [{
-  //   itemID: itemIDQuantity
-  // }], function (err, res) {
-  //   var purchasePrice = result[0].price;
-  //   cusTotal = itemIDQuantity * purchasePrice.tofixed(2);
-  //   console.log('\n Customer total is $' + cusTotal + '.');
-   //   });
+   var cusTotal;
+   connection.query('SELECT Price FROM Products WHERE ?', [{
+    itemID: itemIDQuantity
+   }], function (err, res) {
+     var purchasePrice = result[0].price;
+    cusTotal = itemIDQuantity * purchasePrice.tofixed(2);
+     console.log('\n Customer total is $' + cusTotal + '.');
+     });
     

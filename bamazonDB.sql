@@ -20,16 +20,27 @@ itemID INTEGER  AUTO_INCREMENT PRIMARY KEY ,
 
     -- /* Insert 10 Rows into your new table */ --
 INSERT INTO products(productName, price, stockQuantity)
-VALUES("dress", 12.50, 150), 
-      ("pant", 25.00, 200),
-      ("shirt", 12.10, 125),
-      ("shoe", 11.50, 175),
-      ("hat", 9.50, 75),
-      ("skirt", 16.99, 135),
-      ("belt", 4.50, 100),
-      ("tie", 14.65, 200),
-      ("T-shirt", 12.50, 150),
-      ("stocking", 12.50, 150)
+VALUES("kids & Baby", 12.50, 150), 
+      ("sports", 25.00, 200),
+      ("Books", 12.10, 125),
+      ("Music", 11.50, 175),
+      ("Gift Cards", 9.50, 75),
+      ("Computers", 16.99, 135),
+      ("Outdoors", 4.50, 100),
+      ("Beauty", 14.65, 200),
+      ("AppStore", 12.50, 150),
+      ("Kindle", 12.50, 150)
+
+      --===================================================================--
+
+      CREATE TABLE departments(
+
+    departmentID INTEGER AUTO_INCREMENT PRIMARY KEY,
+    departmentName VARCHAR (30),
+    overHeadCost DECIMAL(10,2), 
+    productSales DECIMAL(10,2),
+    totalProfit DECIMAL(10,2)
+    );
 
       
 
