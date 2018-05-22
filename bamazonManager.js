@@ -19,178 +19,183 @@ connection.connect(function (err) {
   console.log("connected as id " + connection.threadId);
 
   //------------------------------------------------------------
-  // Prompt user to select meun option.
-  prompt.start();
+//   // Prompt user to select meun option.
+//   prompt.start();
 
-  console.log("Meun");
-  console.log("--------------------")
-  console.log("menu option")
-  console.log("1. view  Product for sale");
-  console.log("2. View Low Inventory");
-  console.log("3. Add to Inventory");
-  console.log("4. Add New Product");
+//   console.log("Meun");
+//   console.log("--------------------")
+//   console.log("menu option")
+//   console.log("1. view  Product for sale");
+//   console.log("2. View Low Inventory");
+//   console.log("3. Add to Inventory");
+//   console.log("4. Add New Product");
 
-  prompt.get("selectedMeun", function (err, res) {
+//   prompt.get("selectedMeun", function (err, res) {
 
-    // Switch case options
-    var selectedMenu = parseInt(res.selectedMenu);
+//     // Switch case options
+//     var selectedMenu = parseInt(res.selectedMenu);
 
-    switch (selectedMenu) {
-      case 1:
-        console.log('\nView Products for sale...')
-        // note thta this function uses a callback
-        viewProductsSale(function () {});
-        //end scrpition/connection
-        connection.end();
-        break;
+//     switch (selectedMenu) {
+//       case 1:
+//         console.log('\nView Products for sale...')
+//         // note thta this function uses a callback
+//         viewProductsSale(function () {});
+//         //end scrpition/connection
+//         connection.end();
+//         break;
 
-      case 2:
-        console.log('\nView low inventiory...');
-        wiewLowInventiory();
-        connection.end();
-        break;
+//       case 2:
+//         console.log('\nView low inventiory...');
+//         wiewLowInventiory();
+//         connection.end();
+//         break;
 
-      case 3:
-        console.log("Add to inventory...");
-        addInventory();
-        break;
+//       case 3:
+//         console.log("Add to inventory...");
+//         addInventory();
+//         break;
 
-      case 4:
-        console.log("Add New Product");
-        addNewProduct();
-        break;
-    }
+//       case 4:
+//         console.log("Add New Product");
+//         addNewProduct();
+//         break;
+//     }
 
-  });
+//   });
 
-});
+// });
 
-//===================Function for the switch case=========================================
+// //===================Function for the switch case=========================================
 
-// Call back function for the View Products for Sale
-function viewProductsSale(callback) {
+// // Call back function for the View Products for Sale
+// function viewProductsSale(callback) {
 
-  connection.query("SELECT * FROM Products", function (err, res) {})
+//   connection.query("SELECT * FROM Products", function (err, res) {
+    
 
-  if (err) throw err;
 
-  console.log("Total Inventory...\n");
+//   if (err) throw err;
 
-  // Table Header
-  console.log("ID    |    Product Name    |    Department Name   | Price   | In Stock");
-  console.log("----------------------------------------------------------------------")
+//   console.log("Total Inventory...\n");
 
-  // loop through database and display all items.
-  for (var i = 0; i < res.length; i++) {
+//   // Table Header
+//   console.log("ID    |    Product Name    |    Department Name   | Price   | In Stock");
+//   console.log("----------------------------------------------------------------------")
 
-    // convert to string
-    var item_ID = res[i].itemID + '';
-    itemID = (" ID ", itemID);
+//   // loop through database and display all items.
+//   for (var i = 0; i < res.length; i++) {
 
-    var name = res[i].productName + '';
-    name = (" ProductName ", name);
+//     // convert to string
+//     var item_ID = res[i].itemID + '';
+//     itemID = (" ID ", itemID);
 
-    var name = res[i].departmentName + '';
-    name = (" departmentName ", name);
+//     var name = res[i].productName + '';
+//     name = (" ProductName ", name);
 
-    var price = '$' + res[i].price.toFixed(2) + '';
-    price = (" Price (products on sale)", price + '');
+//     var name = res[i].departmentName + '';
+//     name = (" departmentName ", name);
 
-    var quqntity = res[i].stockQuantity + " ";
+//     var price = '$' + res[i].price.toFixed(2) + '';
+//     price = (" Price (products on sale)", price + '');
 
-    // Log table entry
-    console.log(itemID + '|' + productname + '|' + departmentName + '|' + price + '|' + quantity);
-  }
-  callback();
-  //===============================================================================================
+//     var quqntity = res[i].stockQuantity + " ";
 
-  // Display all item in the database with inventory lower than 5.
-  function viewLowInventory() {
+//     // Log table entry
+//     console.log(itemID + '|' + productname + '|' + departmentName + '|' + price + '|' + quantity);
+//   }
 
-    connection.query("SELECT * FROM Products WHERE stockQuantity < 5", function (err, res) {})
+// })
+//   callback();
+//   //===============================================================================================
 
-    if (err) throw err;
+//   // Display all item in the database with inventory lower than 5.
+//   function viewLowInventory() {
 
-    console.log("Inventory for Items < 5 In Stock...\n");
+//     connection.query("SELECT * FROM Products WHERE stockQuantity < 5", function (err, res) {})
 
-    // Table Header
-    console.log("ID    |    Product Name    |    Department Name   | Price   | In Stock");
-    console.log("----------------------------------------------------------------------")
+//     if (err) throw err;
 
-    // loop through database and display all items.
-    for (var i = 0; i < res.length; i++) {
+//     console.log("Inventory for Items < 5 In Stock...\n");
 
-      // convert to string
-      var item_ID = res[i].itemID + '';
-      itemID = (" ID ", item_ID);
+//     // Table Header
+//     console.log("ID    |    Product Name    |    Department Name   | Price   | In Stock");
+//     console.log("----------------------------------------------------------------------")
 
-      var name = res[i].productName + '';
-      name = (" ProductName ", name);
+//     // loop through database and display all items.
+//     for (var i = 0; i < res.length; i++) {
 
-      var name = res[i].departmentName + '';
-      name = (" departmentName ", name);
+//       // convert to string
+//       var item_ID = res[i].itemID + '';
+//       itemID = (" ID ", item_ID);
 
-      var price = '$' + res[i].price.toFixed(2) + '';
-      price = (" Price (products on sale)", price + '');
+//       var name = res[i].productName + '';
+//       name = (" ProductName ", name);
 
-      var quqntity = res[i].stockQuantity + " ";
+//       var name = res[i].departmentName + '';
+//       name = (" departmentName ", name);
 
-      // Log table entry
-      console.log(itemID + '|' + productname + '|' + departmentName + '|' + price + '|' + quantity);
-    }
-    //=========================================================================================================
-    // Add Inventory
-    function addInventory() {
+//       var price = '$' + res[i].price.toFixed(2) + '';
+//       price = (" Price (products on sale)", price + '');
 
-      // view function & call back 
-      viewProduct(function () {
+//       var quqntity = res[i].stockQuantity + " ";
 
-            // Restock item(s)
-            prompt.start();
-            console.log("\nList item(s) that need to be restock");
-            prompt.get("restockitemID"),
-              function (err, result) {
+//       // Log table entry
+//       console.log(itemID + '|' + productname + '|' + departmentName + '|' + price + '|' + quantity);
+//     }
+//     //=========================================================================================================
+//     // Add Inventory
+//     function addInventory() {
 
-                // Display selected item(s)
-                var restockitemID = res.restockitemID;
-                console.log("Items(s) selected to be restock" + restockitemID + ".");
-              }
-            //Prompt for stock count
-            console.log("\nNumber of item(s) to be restock");
-            prompt.get("countRestock"),
-              function (err, res) {
+//       // view function & call back 
+//       viewProduct(function () {
 
-                //Stock count reflected.
-                var countRestock = result.countRestock;
-                console.log("Item(s) selected to be restock" + restockitemID + "items.");
-                // integer
-                countRestock = parseInt(countRestock); {
+//             // Restock item(s)
+//             prompt.start();
+//             console.log("\nList item(s) that need to be restock");
+//             prompt.get("restockitemID"),
+//               function (err, result) {
 
-                  if(number.isInteger(countRestock)) {
+//                 // Display selected item(s)
+//                 var restockitemID = res.restockitemID;
+//                 console.log("Items(s) selected to be restock" + restockitemID + ".");
+//               }
+//             //Prompt for stock count
+//             console.log("\nNumber of item(s) to be restock");
+//             prompt.get("countRestock"),
+//               function (err, res) {
 
-                    // Query item(s)
+//                 //Stock count reflected.
+//                 var countRestock = result.countRestock;
+//                 console.log("Item(s) selected to be restock" + restockitemID + "items.");
+//                 // integer
+//                 countRestock = parseInt(countRestock); {
 
-                    connection.query("SELECT stockQuantity FROM Products WHERE ?", [{itemID:restockitemID}]), function(err, res){
+//                   if(number.isInteger(countRestock)) {
+
+//                     // Query item(s)
+
+//                     connection.query("SELECT stockQuantity FROM Products WHERE ?", [{itemID:restockitemID}]), function(err, res){
                      
-                      // valid item(s) from the database
-                      if(res[0] == undefined){
-                        console.log("Invalid itemID" + restockitemID + '"')
-                        connection.end();        }
-                      {
-                        var bamazonQuantity = res[0].stockQuantity;
-                        var newInventory = parseInt(bamazonQuantity) + parseInt(countRestock);
+//                       // valid item(s) from the database
+//                       if(res[0] == undefined){
+//                         console.log("Invalid itemID" + restockitemID + '"')
+//                         connection.end();        }
+                        
+//                       {
+//                         var bamazonQuantity = res[0].stockQuantity;
+//                         var newInventory = parseInt(bamazonQuantity) + parseInt(countRestock);
 
-                        //updated item(s)
-                        connectio.query("UPDATE Products SET ? WHERE ?", [{stockQuantity: newInventory}], [{itemID: restockitemID}], function(err, res) {
-                          if(err) throw err;
+//                         //updated item(s)
+//                         connectio.query("UPDATE Products SET ? WHERE ?", [{stockQuantity: newInventory}], [{itemID: restockitemID}], function(err, res) {
+//                           if(err) throw err;
 
-                          console.log("\nInventory successfully updated")
-                          connection.end();
-                        });
-                      }
-      }
-      }
-      }
-    }
-  }
+//                           console.log("\nInventory successfully updated")
+//                           connection.end();
+//                         });
+//                       }
+//       }
+//       }
+//       }
+//       }
+//       }
     

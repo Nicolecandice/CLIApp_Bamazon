@@ -31,26 +31,31 @@ function queryAllSaleProducts() {
     // message to user
     console.log('Items on sale...\n');
 
-    console.log('ID | Product_Name | Price (products on sale)');
-
-    console.log('--------------------------------------------')
+    console.log('ID | Product Name | Department Name | Price  |In Stock');
+    console.log('------------------------------------------------------')
 
     // loop through database and display all items.
     for (var i = 0; i < res.length; i++) {
 
       // convert to string
-      var item_ID = res[i].itemID + '';
-      itemID = (" ID ", item_ID);
+      var itemID = res[i].itemID + '';
+      itemID = (" ID ", itemID);
 
-      var name = res[i].productName + '';
-      name = (" Product_Name ", name);
+      var productName = res[i].productName + '';
+      productName = (" ProductName ", productName);
+
+      var departmentName = res[i].departmentName + '';
+      departmentName = (" DepartmentName ", departmentName);
 
       var price = '$' + res[i].price.toFixed(2) + '';
-      price = (" Price (products on sale)", price + '');
+      price = (" Price ", price + '');
+
+      var stockQuantity = res[i].stockQuantity + '';
 
       // Log table entry
-      console.log(item_ID + '|' + name + '|' +  price);
+      console.log(itemID + '|' + productName + '|' +  departmentName + '|' + price + '|' + stockQuantity);
     }
+ 
     //----------------------------------------------------------------------------------
   prompt.start();
          console.log("\nWhich item(ID) will you like to purchase?");
@@ -58,33 +63,36 @@ function queryAllSaleProducts() {
 
           // Display item(ID) selected
           var itemID = res.itemID;
-          console.log("ItemID" + '.');
+          console.log("ItemID selected "  +  itemID  + '.');
           //-------------------------------------------------------------------
-
+       
          console.log("\nHow many items will you like to purchase?");
          prompt.get(["itemIDQuantity"]), function (err, res) {
 
           // Display number of item(s) selected
           var itemIDQuantity = res.itemIDQuantity;
-          console.log(" itemIDQuantity  selected is"+ '.');
-         }
-        }
-
+          console.log("You have selected " + itemIDQuantity);
+      
      //the application has to check if store has enough product to meet customer request
-     connection.query('SELECT stockQuantity FROM products WHERE ?' ,[{itemID: itemIDQuantity}], function (err, res) {
+     connection.query("SELECT stockQuantity FROM products WHERE ?" ,[{itemID: itemIDQuantity}], function (err, res) {
       // Error handler
      if (err) throw err;
 
-         var bamazonQuantity = res[0].StockQuantity;
-         if(bamazonQuantity <= itemIDQuantity){
-          console.log('Sorry products out of stock' + bamazonQuantity + 'for these items order Cancelled.');
+         if(res[0] == undefined) {
+          console.log( "Sorry... item ID not found" +  itemIDQuantity + '');
           connection.end(); // end of scrpit connection
          }
-    
-      // update mysql database with new inventory
-      else {
+        
 
-        var newInventory = parseInt(bamazonQuantity) + parseInt(itemIDQuantity);
+         //User ID validation and comparison of bamazon Inventory with user Quantity
+         else{ var bamazonQuantity = res[0].stockQuantity;
+          
+          //Sufficient Inventory
+          if(bamazonQuantity >= itemIDQuantity) {
+
+    
+       // update mysql database with reduce inventory
+         var newInventory = parseInt(bamazonQuantity) - parseInt(itemIDQuantity);
          connection.query('UPDATE Products SET? WHERE?', [{
          stockQuantity: newInventory
        }, {
@@ -92,34 +100,26 @@ function queryAllSaleProducts() {
         }], function (err, res) {
         if (err) throw err;
        });
-      }
 
-     function updateProducts() {
-     console.log('Updating  products quantities...\n');
-     var query = connection.query(
-       'UPDATE products SET ?', [{
-           quantity: 175
-         },
-         {
-           Product_Name: ""
-         }
-       ],
-      function (err, res) {
-         console.log(res.affectedRows + "products updated!\n");
-        // Call updatedProduct AFTER the UPDATE completes
-         updateProducts();
-
-        // log the query being run
-         console.log(query.sql);
-       });
-   }
-
+     // Display customer purchase total
    var cusTotal;
-   connection.query('SELECT Price FROM Products WHERE ?', [{
+    connection.query('SELECT Price FROM Products WHERE ?', [{
     itemID: itemIDQuantity
-   }], function (err, res) {
-     var purchasePrice = result[0].price;
-    cusTotal = itemIDQuantity * purchasePrice.tofixed(2);
+    }], function (err, res) {
+      var purchasePrice = result[0].price;
+     cusTotal = itemIDQuantity * purchasePrice.tofixed(2);
      console.log('\n Customer total is $' + cusTotal + '.');
-     });
+    });
+  
+  }
+
+     else{ // Insufficient Inventory
+       console.log("Sorry... item(s) in stock is: " + bamazonQuantity + "Order cancelled.");
+       connection.end();
+
+     }
+
+     // Result displays 
+    
+
     

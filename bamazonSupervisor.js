@@ -48,71 +48,71 @@ connection.connect(function(err) {
 
 });
 
-function viewSalesbyDept() {
-  if (err) throw err;
+// function viewSalesbyDept() {
+//   if (err) throw err;
 
-  connection.query("SELECT * FROM Departments", function (err, res) {})
+//   connection.query("SELECT * FROM Departments", function (err, res) {})
 
-  console.log("View Products Sales by Department...\n");
+//   console.log("View Products Sales by Department...\n");
 
-  // Table Header
-  console.log("Department ID   | Department Name | Over Head costs  | Product Sales   | Total Profit");
-  console.log("----------------------------------------------------------------------")
+//   // Table Header
+//   console.log("Department ID   | Department Name | Over Head costs  | Product Sales   | Total Profit");
+//   console.log("----------------------------------------------------------------------")
 
-  // loop through database and display all items.
-  for (var i = 0; i < res.length; i++) {
+//   // loop through database and display all items.
+//   for (var i = 0; i < res.length; i++) {
 
-    // convert to string
-    var DepartmentID = res[i].departmentID + '';
-    DepartmentID = ("department_id", departmentID);
+//     // convert to string
+//     var DepartmentID = res[i].departmentID + '';
+//     DepartmentID = ("department_id", departmentID);
  
-    var DepartmentName  = res[i].DepartmentName + '';
-        DepartmentName =  ("department_Name" ,departmentName);
-}
+//     var DepartmentName  = res[i].DepartmentName + '';
+//         DepartmentName =  ("department_Name" ,departmentName);
+// }
 
-// calculate on the fly using the difference between over head cost and product sales.
+// // calculate on the fly using the difference between over head cost and product sales.
 
-var OverHeadCost = res[i].overHeadCost.toFixed(2);
-var ProductSales = res[i].productSales.toFixed(2);
-var TotalProfit = (parseFloat(overHeadCost) - (parseFloat(productSales)).tofixed);
+// var OverHeadCost = res[i].overHeadCost.toFixed(2);
+// var ProductSales = res[i].productSales.toFixed(2);
+// var TotalProfit = (parseFloat(overHeadCost) - (parseFloat(productSales)).tofixed);
 
- // Log table entry
- console.log(DepartmentID + '|' + DepartmentName + '|' + OverHeadcosts + '|' +  ProductSales + '|' + TotalProfit);
- connection.end();
-}
+//  // Log table entry
+//  console.log(DepartmentID + '|' + DepartmentName + '|' + OverHeadcosts + '|' +  ProductSales + '|' + TotalProfit);
+//  connection.end();
+// }
 
-//======================================================
+// //======================================================
 
-//Prompt create New Departments
-function AddNewDept(){
+// //Prompt create New Departments
+// function AddNewDept(){
 
-  prompt.start();
-console.log("\nNew Departments created");
-prompt.get("DepartmentName, OverHeadCost, TotalProfit"),
-  function (err, res) {
+//   prompt.start();
+// console.log("\nNew Departments created");
+// prompt.get("DepartmentName, OverHeadCost, TotalProfit"),
+//   function (err, res) {
 
-    //add new departments
-    var DepartmentName = res.departmentName;
-    var OverHeadCost = res.OverHeadCost;
-    var TotalProfit = res.TotalProfit;
+//     //add new departments
+//     var DepartmentName = res.departmentName;
+//     var OverHeadCost = res.OverHeadCost;
+//     var TotalProfit = res.TotalProfit;
     
-            //updated item(s)
-            connectio.query("UPDATE Departments SET ?", {DepartmentName: departmentName,
-            OverHeadCost: OverHeadCost,
-            TotalProfit: TotalProfit } ,function(err, res) {
-              if(err) 
+//             //updated item(s)
+//             connectio.query("UPDATE Departments SET ?", {DepartmentName: departmentName,
+//             OverHeadCost: OverHeadCost,
+//             TotalProfit: TotalProfit } ,function(err, res) {
+//               if(err) 
 
-              {
-                console.log("\nSorry couldn't be updated, Please re-check update entered")
-              connection.end(); }
+//               {
+//                 console.log("\nSorry couldn't be updated, Please re-check update entered")
+//               connection.end(); }
 
-          else {
-            console.log("\nInventory successfully updated")
-            connection.end();
-              }
-            }
-            )};
-          }
+//           else {
+//             console.log("\nInventory successfully updated")
+//             connection.end();
+//               }
+//             }
+//             )};
+//           }
         
         
 
