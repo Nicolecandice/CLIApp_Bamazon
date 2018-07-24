@@ -1,6 +1,7 @@
-var prompt = require("prompt");
-
 var mysql = require("mysql");
+var inquirer = require("inquirer");
+require("console.table")
+
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -15,111 +16,96 @@ var connection = mysql.createConnection({
 });
 
 connection.connect(function (err) {
-  if (err) throw err;
-  console.log("connected as id " + connection.threadId);
-  queryAllSaleProducts();
+  if (err) {
+  console.error("error connecting: " + err.stack);
+  }
+  loadProducts();
 });
 
-//Display all items available for sale
-
-function queryAllSaleProducts() {
-  connection.query("SELECT * FROM products", function (err, res) {
-
-    // display errors
-    if (err) throw err;
-    
-    // message to user
-    console.log('Items on sale...\n');
-
-    console.log('ID | Product Name | Department Name | Price  |In Stock');
-    console.log('------------------------------------------------------')
-
-    // loop through database and display all items.
-    for (var i = 0; i < res.length; i++) {
-
-      // convert to string
-      var itemID = res[i].itemID + '';
-      itemID = (" ID ", itemID);
-
-      var productName = res[i].productName + '';
-      productName = (" ProductName ", productName);
-
-      var departmentName = res[i].departmentName + '';
-      departmentName = (" DepartmentName ", departmentName);
-
-      var price = '$' + res[i].price.toFixed(2) + '';
-      price = (" Price ", price + '');
-
-      var stockQuantity = res[i].stockQuantity + '';
-
-      // Log table entry
-      console.log(itemID + '|' + productName + '|' +  departmentName + '|' + price + '|' + stockQuantity);
-    }
- 
-    //----------------------------------------------------------------------------------
-  prompt.start();
-         console.log("\nWhich item(ID) will you like to purchase?");
-         prompt.get(["itemID"]), function (err, res) {
-
-          // Display item(ID) selected
-          var itemID = res.itemID;
-          console.log("ItemID selected "  +  itemID  + '.');
-          //-------------------------------------------------------------------
-       
-         console.log("\nHow many items will you like to purchase?");
-         prompt.get(["itemIDQuantity"]), function (err, res) {
-
-          // Display number of item(s) selected
-          var itemIDQuantity = res.itemIDQuantity;
-          console.log("You have selected " + itemIDQuantity);
-      
-     //the application has to check if store has enough product to meet customer request
-     connection.query("SELECT stockQuantity FROM products WHERE ?" ,[{itemID: itemIDQuantity}], function (err, res) {
-      // Error handler
-     if (err) throw err;
-
-         if(res[0] == undefined) {
-          console.log( "Sorry... item ID not found" +  itemIDQuantity + '');
-          connection.end(); // end of scrpit connection
-         }
-        
-
-         //User ID validation and comparison of bamazon Inventory with user Quantity
-         else{ var bamazonQuantity = res[0].stockQuantity;
-          
-          //Sufficient Inventory
-          if(bamazonQuantity >= itemIDQuantity) {
-
-    
-       // update mysql database with reduce inventory
-         var newInventory = parseInt(bamazonQuantity) - parseInt(itemIDQuantity);
-         connection.query('UPDATE Products SET? WHERE?', [{
-         stockQuantity: newInventory
-       }, {
-         itemID: itemIDQuantity
-        }], function (err, res) {
-        if (err) throw err;
-       });
-
-     // Display customer purchase total
-   var cusTotal;
-    connection.query('SELECT Price FROM Products WHERE ?', [{
-    itemID: itemIDQuantity
-    }], function (err, res) {
-      var purchasePrice = result[0].price;
-     cusTotal = itemIDQuantity * purchasePrice.tofixed(2);
-     console.log('\n Customer total is $' + cusTotal + '.');
-    });
+ function  loadProducts(){
+connection.query("SELECT * FROM products", function (err, res) {
+  if(err) throw err;
+  console.table(res);
   
+  promptCustomerForItem(res);
+});
+ }
+
+ function  promptCustomerForItem(inventory) {
+  inquirer.
+  prompt([
+    {
+      type: "input",
+      name: "choice",
+      massage: "What is the ID will you like to purchase? [quit with Q]",
+      validate: function(val) {
+        return !isNaN(val) || val.toLocaleLowerCase() === "q";
+      }
+    }
+  ])
+ .then(function(val) {
+   // check if user want to quit the program
+   checkIfShouldExit(val.choice);
+   var choiceId = parseInt(val.choice);
+   var product = checkInventory(choiceId, inventory);
+ 
+   if (product) {
+     promptCustomerForQuantity(product);
+   }
+   else {
+     console.log("\nThat item is not in the inventory.");
+     loadProducts();
+   }
+  });
+}
+function promptCustomerForQuantity(product) {
+  inquirer
+  .prompt([
+    {
+      type: "input",
+      name: "quantity",
+      message: "How many would you like? [Quit with Q]",
+      validate: function(val) {
+        return val > 0 || val.toLowerCase() === "q";
+      }
+    }
+    
+  ])
+  .then(function(val) {
+    checkIfShouldExit(val.quantity);
+    var quantity = parseInt(val.quantity);
+
+    if (quantity > product.stock_quantity)  {
+      console.log("\nInsuficient quantity!");
+      loadProducts();
+    }
+else{
+  makePurchase(product, quantity);
+}
+  });
+}
+ function makePurchase(product, quantity) {
+   connection.query(
+     "UPDATE products SET stock_quantity = stock_quantity - ?, product_sales + ? WHERE item_id = ?",
+     function(err, res) {
+  console.log("\nSuccessfully purchased"   +  quantity  +  "  " +  product.product_name  + "'s!");
+  loadProducts();
+}
+);
+}
+
+function checkInventory(choiceId, inventory) {
+  for(var i = 0; i < inventory.length; i++) {
+    if(inventory[i].item_id === choiceId){
+      return inventory[i];
+    }
   }
+  return null;
+}
 
-     else{ // Insufficient Inventory
-       console.log("Sorry... item(s) in stock is: " + bamazonQuantity + "Order cancelled.");
-       connection.end();
-
-     }
-
-     // Result displays 
-    
-
-    
+  function checkIfShouldExit(choice) {
+    if(choice.toLowerCase() === "q") {
+      console.log("Goodbye");
+      process.exit(0);
+    }
+  }
